@@ -1,29 +1,158 @@
 <!doctype html>
 <html lang="ru">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QA Lab — учись, отправляя запросы</title><link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8f6">
+  <meta name="description" content="QA Lab — учебная API-песочница для практики HTTP, тестирования и CI/CD.">
+  <title>QA Lab — практика API без лишнего</title>
+  <link rel="icon" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
 <body>
-<header class="topbar"><a class="brand" href="/" aria-label="QA Lab, главная"><span class="brand-mark">q.</span> QA LAB <span class="edition">PRACTICE / 01</span></a><nav><a href="/guide.html">Git · Docker · CI/CD ↗</a><a href="/openapi.yaml">API-контракт ↗</a></nav><span id="health" class="health">Проверяем сервер…</span></header>
-<main>
-<section class="intro"><div><div class="eyebrow">ТВОЯ ПЕРВАЯ API-ЛАБОРАТОРИЯ</div><h1>Не зубри HTTP.<br>Поговори с сервером<span class="accent">.</span></h1><p class="lead">Ты — тестировщик маленького магазина. Отправляй запросы, меняй данные и проверяй, что получилось. Ошибки здесь — часть задания.</p><div class="intro-tags"><span>Java 21</span><span>Spring Boot</span><span>Настоящий API</span><span>Без установки</span></div></div><aside class="how"><span class="number">01 → 17</span><h2>Один запрос.<br>Одно открытие.</h2><p>Выбери шаг слева. Прочти задачу. Нажми «Отправить». Посмотри статус и JSON справа.</p><div class="mini-flow"><span>ты</span><b>→ запрос →</b><span>сервер</span><b>→ ответ</b></div></aside></section>
-<div class="notice"><strong>Это безопасная учебная песочница.</strong> Только вымышленные данные и отдельный учебный пароль. Реальных платежей нет. Данные временные: исчезают при перезапуске или после 24 часов бездействия. На бесплатном сервере первый запрос после сна может быть медленным.</div>
-<section class="lab" aria-label="Лаборатория HTTP">
-<aside class="missions"><div class="section-label">МАРШРУТ <span id="progress">0 / 17</span></div><div id="missions"></div><a class="download" href="/postman/qa-lab.postman_collection.json" download>↓ Коллекция для Postman</a><a class="download" href="/postman/local.postman_environment.json" download>↓ Окружение localhost</a></aside>
-<div class="workspace">
-<section class="brief"><div class="eyebrow" id="lesson-label"></div><h2 id="lesson-title"></h2><p id="lesson-description"></p><div class="expected"><span>ПРОВЕРЬ</span><p id="lesson-check"></p></div></section>
-<div class="console-grid">
-<section class="request-panel"><div class="panel-heading"><h3>Запрос</h3><span>Ты → сервер</span></div><label class="field-label" for="method">Метод — что сделать / путь — с чем</label><div class="request-line"><select id="method" aria-label="HTTP метод"><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option><option>HEAD</option><option>OPTIONS</option></select><input id="path" aria-label="Путь запроса" value="/api/catalog" spellcheck="false"></div>
-<div class="auth-row"><label><input type="checkbox" id="use-token" checked> Добавлять Bearer-токен</label><span id="auth-state">ещё нет токена</span></div>
-<details class="token-details"><summary>Вставить токен из Postman / посмотреть текущий</summary><label for="token">Токен хранится только в этой вкладке до обновления страницы</label><input id="token" type="password" autocomplete="off" placeholder="Bearer-токен (без слова Bearer)"><button id="show-token" class="small-button" type="button">Показать / скрыть</button></details>
-<label class="field-label" for="key">Idempotency-Key <span>необязательно · для заказов</span></label><input id="key" class="full-input" placeholder="Например: my-order-1" maxlength="64" spellcheck="false">
-<label class="field-label" for="body">Тело запроса <span>JSON · Content-Type: application/json</span></label><textarea id="body" rows="9" aria-label="Тело JSON" spellcheck="false"></textarea><p id="body-hint" class="micro"></p>
-<button id="send" class="send" type="button">Отправить запрос <span>↗</span></button><div class="keyboard-hint">Ctrl / ⌘ + Enter — отправить</div></section>
-<section class="response-panel"><div class="panel-heading"><h3>Ответ</h3><span>Сервер → ты</span></div><div class="response-meta" aria-live="polite"><span id="status" class="status">Ждёт запроса</span><span id="timing">— мс</span></div><p id="feedback" class="feedback" aria-live="polite">Здесь появится ответ настоящего Spring Boot сервера.</p><pre id="response" tabindex="0">// Нажми «Отправить запрос».
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="QA Lab, главная">
+        <span class="brand-mark" aria-hidden="true">q.</span>
+        <span class="brand-name">QA LAB</span>
+        <span class="brand-subtitle">API PRACTICE</span>
+      </a>
+      <nav class="top-nav" aria-label="Основная навигация">
+        <a href="/guide.html">Карта обучения</a>
+        <a href="/openapi.yaml">API-контракт <span aria-hidden="true">↗</span></a>
+      </nav>
+      <div class="header-actions">
+        <span id="health" class="health-pill"><span class="health-dot" aria-hidden="true"></span>Проверяем API…</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <div class="kicker"><span class="kicker-dot" aria-hidden="true"></span>ТВОЯ ПЕРВАЯ API-ЛАБОРАТОРИЯ</div>
+        <h1 id="hero-title">Не зубри HTTP.<br><span class="hero-accent">Разговаривай</span> с сервером.</h1>
+        <p class="hero-lead">Небольшой магазин, настоящий Spring Boot API и 17 коротких экспериментов. Отправляй запросы, наблюдай за ответами и учись находить ошибки спокойно.</p>
+        <div class="hero-actions">
+          <button class="primary-action" type="button" data-scroll-to="#lab">Начать с первого запроса <span aria-hidden="true">↗</span></button>
+          <a class="secondary-action" href="/guide.html">Открыть карту обучения</a>
+        </div>
+        <div class="hero-trust" aria-label="Особенности тренажёра">
+          <span><b aria-hidden="true">✓</b> Без установки</span>
+          <span><b aria-hidden="true">✓</b> Только вымышленные данные</span>
+          <span><b aria-hidden="true">✓</b> Java 21 · Spring Boot</span>
+        </div>
+      </div>
+
+      <div class="hero-side" aria-label="Как устроена практика">
+        <div class="story-card">
+          <div class="story-card-head"><span>Сценарий практики</span><strong>01 — 17</strong></div>
+          <h2>Один запрос.<br>Одно понятное открытие.</h2>
+          <div class="story-flow">
+            <div class="flow-node"><span class="flow-icon" aria-hidden="true">you</span><span>ты</span></div>
+            <span class="flow-arrow" aria-hidden="true">→</span>
+            <div class="flow-node"><span class="flow-icon server" aria-hidden="true">API</span><span>сервер</span></div>
+            <span class="flow-arrow" aria-hidden="true">→</span>
+            <div class="flow-node"><span class="flow-icon result" aria-hidden="true">200</span><span>ответ</span></div>
+          </div>
+          <p>Выбираешь шаг, отправляешь запрос, читаешь статус и JSON. Ошибка здесь — не провал, а подсказка.</p>
+        </div>
+        <div class="hero-side-note"><span class="note-line" aria-hidden="true"></span><span>Сложное внутри — простое снаружи.</span></div>
+      </div>
+    </section>
+
+    <section class="notice" role="note">
+      <span class="notice-icon" aria-hidden="true">i</span>
+      <div><strong>Безопасная учебная песочница.</strong> Только вымышленные данные, отдельный учебный аккаунт и никакой реальной оплаты.</div>
+      <span class="notice-detail">Данные временные · бесплатный сервер может просыпаться до минуты</span>
+    </section>
+
+    <section class="lab" id="lab" aria-label="Лаборатория HTTP">
+      <aside class="mission-sidebar">
+        <div class="sidebar-head">
+          <div><span class="overline">МАРШРУТ</span><h2>Практика</h2></div>
+          <span id="progress" class="progress-count">0 / 17</span>
+        </div>
+        <div class="progress-track" aria-hidden="true"><span id="progress-fill"></span></div>
+        <p class="sidebar-hint">Иди по шагам или выбирай любой сценарий. Пройденное сохранится до обновления страницы.</p>
+        <div id="missions" class="mission-list"></div>
+        <div class="resource-list">
+          <a href="/postman/qa-lab.postman_collection.json" download><span aria-hidden="true">↓</span> Коллекция Postman</a>
+          <a href="/postman/local.postman_environment.json" download><span aria-hidden="true">↓</span> Окружение localhost</a>
+        </div>
+      </aside>
+
+      <div class="workspace">
+        <header class="lesson-header">
+          <div class="lesson-topline"><span id="lesson-label" class="lesson-label"></span><span class="practice-mode"><span aria-hidden="true"></span> Учебный режим</span></div>
+          <h2 id="lesson-title"></h2>
+          <p id="lesson-description"></p>
+          <div class="expected">
+            <span class="expected-mark" aria-hidden="true">✓</span>
+            <div><span class="expected-label">ЧТО ПРОВЕРИТЬ</span><p id="lesson-check"></p></div>
+          </div>
+        </header>
+
+        <div class="console-grid">
+          <section class="console-panel request-panel" aria-labelledby="request-title">
+            <div class="panel-heading">
+              <div class="panel-title-group"><span class="panel-number" aria-hidden="true">01</span><div><h3 id="request-title">Запрос</h3><span>Ты → сервер</span></div></div>
+              <span class="panel-state">готов к отправке</span>
+            </div>
+
+            <div class="request-url-label">Метод и путь запроса</div>
+            <div class="request-line">
+              <label class="sr-only" for="method">HTTP метод</label>
+              <select id="method" aria-label="HTTP метод"><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option><option>HEAD</option><option>OPTIONS</option></select>
+              <label class="sr-only" for="path">Путь запроса</label>
+              <input id="path" aria-label="Путь запроса" value="/api/catalog" spellcheck="false">
+            </div>
+
+            <div class="auth-row">
+              <label class="toggle-line"><input type="checkbox" id="use-token" checked><span class="toggle-control" aria-hidden="true"></span><span>Добавлять Bearer-токен</span></label>
+              <span id="auth-state" class="auth-state">ещё нет токена</span>
+            </div>
+            <details class="advanced-details token-details"><summary>Токен и дополнительные заголовки</summary><label for="token">Токен хранится только в этой вкладке</label><div class="token-entry"><input id="token" type="password" autocomplete="off" placeholder="Вставь токен без слова Bearer"><button id="show-token" class="tertiary-button" type="button">Показать</button></div></details>
+
+            <label class="field-label" for="key">Idempotency-Key <span>необязательно · для заказов</span></label>
+            <input id="key" class="full-input" placeholder="Например: my-order-1" maxlength="64" spellcheck="false">
+            <div class="field-label body-label"><label for="body">Тело запроса</label><span>JSON · application/json</span></div>
+            <textarea id="body" rows="9" aria-label="Тело JSON" spellcheck="false"></textarea>
+            <p id="body-hint" class="field-hint"></p>
+            <button id="send" class="send-button" type="button"><span>Отправить запрос</span><span class="send-icon" aria-hidden="true">↗</span></button>
+            <div class="keyboard-hint"><kbd>Ctrl</kbd><span>+</span><kbd>Enter</kbd> отправить</div>
+          </section>
+
+          <section class="console-panel response-panel" aria-labelledby="response-title">
+            <div class="panel-heading">
+              <div class="panel-title-group"><span class="panel-number response-number" aria-hidden="true">02</span><div><h3 id="response-title">Ответ</h3><span>Сервер → ты</span></div></div>
+              <button id="copy-response" class="copy-button" type="button" disabled>Копировать</button>
+            </div>
+            <div class="response-meta" aria-live="polite"><span id="status" class="status">Ждёт запроса</span><span id="timing" class="timing">— мс</span></div>
+            <p id="feedback" class="feedback" aria-live="polite">Здесь появится ответ настоящего Spring Boot сервера.</p>
+            <div class="response-output"><pre id="response" tabindex="0">// Нажми «Отправить запрос».
 // GET получает данные.
-// Он не создаёт и не удаляет товары.</pre><details><summary>Заголовки ответа</summary><pre id="headers">Пока нет</pre></details><details><summary>Как выглядит отправленный запрос</summary><pre id="raw-request">Пока нет</pre></details><p class="micro">401 ≠ 403. 401 — «кто ты?», 403 — «знаю тебя, но сюда нельзя».</p></section>
-</div>
-<div class="bottom-note"><span>Экспериментируй: меняй цену, удаляй обязательное поле, отправляй запрос повторно.</span><button id="reset" type="button" class="text-button">Сбросить только мою песочницу ↺</button></div>
-</div>
-</section>
-<section class="next"><div><div class="eyebrow">ДАЛЬШЕ — КАК НА РАБОТЕ</div><h2>Запрос → тест → коммит → деплой.</h2><p>Запусти тот же сервис в Docker, создай ветку в Git и посмотри, как GitHub Actions проверяет изменения.</p></div><a href="/guide.html" class="outline-button">Открыть практикум ↗</a></section>
-</main><footer><span>QA LAB / Учебный проект</span><span>Цены — в целых сомах (KGS). Не для реальных клиентов.</span></footer>
-</body></html>
+// Он не создаёт и не удаляет товары.</pre></div>
+            <details class="response-details"><summary>Заголовки ответа</summary><pre id="headers">Пока нет</pre></details>
+            <details class="response-details"><summary>Как выглядит отправленный запрос</summary><pre id="raw-request">Пока нет</pre></details>
+            <p class="response-tip"><span aria-hidden="true">↳</span> 401 — «кто ты?». 403 — «знаю тебя, но сюда нельзя».</p>
+          </section>
+        </div>
+
+        <div class="workspace-footer"><span>Меняй данные намеренно: хороший тест проверяет и успех, и отказ.</span><button id="reset" type="button" class="reset-button">Сбросить мою песочницу <span aria-hidden="true">↺</span></button></div>
+      </div>
+    </section>
+
+    <section class="next-section">
+      <div><span class="overline">СЛЕДУЮЩИЙ УРОВЕНЬ</span><h2>Запрос → тест → коммит → деплой.</h2><p>Когда HTTP станет привычным, запускай тот же сервис в Docker и смотри, как GitHub Actions проверяет изменения.</p></div>
+      <a href="/guide.html" class="outline-action">Открыть практикум <span aria-hidden="true">↗</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer"><span>QA LAB <i aria-hidden="true">/</i> учебный проект</span><span>Цены в сомах · реальных клиентов и платежей нет</span></footer>
+</body>
+</html>

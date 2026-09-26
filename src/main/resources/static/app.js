@@ -30,6 +30,7 @@ function renderMissions(){
   const title=document.createElement('span');title.textContent=lesson.title;button.append(number,title);button.addEventListener('click',()=>choose(index));$('missions').append(button);
  });
  $('progress').textContent=`${state.completed.size} / ${lessons.length}`;
+ $('progress-fill').style.width=`${Math.round((state.completed.size/lessons.length)*100)}%`;
 }
 function choose(index){
  state.lesson=index;const lesson=lessons[index];
@@ -39,7 +40,7 @@ function choose(index){
  bodyMode();renderMissions();
 }
 function bodyMode(){const disabled=['GET','HEAD','OPTIONS'].includes($('method').value);$('body').disabled=disabled;$('body-hint').textContent=disabled?'У этого запроса тело не отправляется.':'Текст из этого поля отправится серверу как JSON. Можно намеренно сломать его для проверки 400.';}
-function syncToken(value){state.token=value;$('token').value=value;$('auth-state').textContent=value?'токен готов ✓':'ещё нет токена';}
+function syncToken(value){state.token=value;$('token').value=value;$('auth-state').textContent=value?'токен готов ✓':'ещё нет токена';$('auth-state').classList.toggle('ready',Boolean(value));}
 async function send(){
  const method=$('method').value,path=expand($('path').value.trim()),body=expand($('body').value),lessonIndex=state.lesson,lesson=lessons[lessonIndex];
  if(!path.startsWith('/api/')||path.includes('\\')||new URL(path,location.origin).origin!==location.origin){$('feedback').textContent='Для безопасности доступны только пути /api/ этого сервера.';return;}
@@ -50,7 +51,7 @@ async function send(){
  const safeHeaders={...headers};if(safeHeaders.Authorization)safeHeaders.Authorization='Bearer <токен скрыт>';
  let safeBody=body;try{const parsed=JSON.parse(body);if('password' in parsed){parsed.password='<учебный пароль скрыт>';safeBody=JSON.stringify(parsed,null,2);}}catch{}
  $('raw-request').textContent=`${method} ${path}\n${Object.entries(safeHeaders).map(([k,v])=>`${k}: ${v}`).join('\n')}${hasBody?'\n\n'+safeBody:''}`;
- $('send').disabled=true;$('status').textContent='Отправляем…';$('feedback').textContent='Ожидаем ответ. После сна бесплатный сервер запускается заново.';
+ $('send').disabled=true;$('send').setAttribute('aria-busy','true');$('status').textContent='Отправляем…';$('status').className='status';$('feedback').textContent='Ожидаем ответ. После сна бесплатный сервер запускается заново.';
  const started=performance.now();const abort=new AbortController();const timeout=setTimeout(()=>abort.abort(),90000);
  try{
   const response=await fetch(path,{method,headers,body:hasBody?body:undefined,signal:abort.signal,credentials:'omit',redirect:'error'});
@@ -58,6 +59,7 @@ async function send(){
   $('status').textContent=`${response.status} ${response.statusText}`;$('status').className=`status ${response.ok?'good':'bad'}`;$('timing').textContent=`${Math.round(performance.now()-started)} мс`;
   let display=data;if(data?.token){syncToken(data.token);display={...data,token:'<сохранён в поле токена; скрыт в ответе>'};if(data.user?.email)state.email=data.user.email;}
   $('response').textContent=display?JSON.stringify(display,null,2):(raw||'∅ Пустое тело ответа. Для 204 это правильно.');
+  $('copy-response').disabled=false;
   $('headers').textContent=Array.from(response.headers).map(([k,v])=>`${k}: ${v}`).join('\n');
   if(response.ok&&path.startsWith('/api/products')){if(data?.id)state.productId=data.id;else if(!state.productId&&data?.items?.length)state.productId=data.items[0].id;}
   if(response.ok&&path.startsWith('/api/orders')&&data?.id)state.orderId=data.id;
@@ -66,9 +68,11 @@ async function send(){
   if(expected){state.completed.add(lessonIndex);renderMissions();$('feedback').textContent='Нужный статус получен ✓ Теперь проверь содержимое по подсказке выше: один код ещё не доказывает, что всё правильно.';}
   else $('feedback').textContent=response.ok?'Запрос выполнен. Сравни результат с ожиданием.':`${data?.message||'Сервер вернул ошибку'}. Смотри code и fields ниже.`;
  }catch(error){$('status').textContent='Нет ответа';$('status').className='status bad';$('feedback').textContent=error.name==='AbortError'?'Сервер не ответил за 90 секунд. Возможно, он ещё запускается. Попробуй снова.':'Не удалось получить ответ. Проверь сеть и доступность сервера.';$('response').textContent='HTTP-статус не получен. Это не то же самое, что ответ 500.';}
- finally{clearTimeout(timeout);$('send').disabled=false;}
+ finally{clearTimeout(timeout);$('send').disabled=false;$('send').removeAttribute('aria-busy');}
 }
 $('send').addEventListener('click',send);$('method').addEventListener('change',bodyMode);$('token').addEventListener('input',e=>syncToken(e.target.value.trim()));$('show-token').addEventListener('click',()=>{$('token').type=$('token').type==='password'?'text':'password';});
+document.querySelectorAll('[data-scroll-to]').forEach(button=>button.addEventListener('click',()=>document.querySelector(button.dataset.scrollTo)?.scrollIntoView({behavior:'smooth',block:'start'})));
+$('copy-response').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('response').textContent);const button=$('copy-response');const previous=button.textContent;button.textContent='Скопировано ✓';setTimeout(()=>{button.textContent=previous;},1400);}catch{$('feedback').textContent='Не удалось скопировать автоматически. Выдели ответ и скопируй вручную.';}});
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'&&!$('send').disabled){e.preventDefault();send();}});
 $('reset').addEventListener('click',async()=>{
  if(!state.token){$('feedback').textContent='Сначала зарегистрируйся или войди.';return;}
