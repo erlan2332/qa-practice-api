@@ -19,10 +19,10 @@ public class InMemoryTransactionManager {
         }
     }
 
-    public void execute(Runnable action) {
+    public void execute(Runnable actions) {
         lock.lock();
         try {
-            action.run();
+            actions.run();
         } finally {
             lock.unlock();
         }
