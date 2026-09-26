@@ -22,7 +22,6 @@
         <span class="brand-subtitle">API PRACTICE</span>
       </a>
       <nav class="top-nav" aria-label="Основная навигация">
-        <a href="/guide.html">Карта обучения</a>
         <a class="swagger-nav" href="/swagger-ui.html">Swagger UI <span aria-hidden="true">↗</span></a>
         <a href="/openapi.yaml">OpenAPI YAML <span aria-hidden="true">↗</span></a>
       </nav>
@@ -33,50 +32,11 @@
   </header>
 
   <main class="page">
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <div class="kicker"><span class="kicker-dot" aria-hidden="true"></span>ТВОЯ ПЕРВАЯ API-ЛАБОРАТОРИЯ</div>
-        <h1 id="hero-title">Не зубри HTTP.<br><span class="hero-accent">Разговаривай</span> с сервером.</h1>
-        <p class="hero-lead">Небольшой магазин, настоящий Spring Boot API и 17 коротких экспериментов. Отправляй запросы, наблюдай за ответами и учись находить ошибки спокойно.</p>
-        <div class="hero-actions">
-          <button class="primary-action" type="button" data-scroll-to="#lab">Начать с первого запроса <span aria-hidden="true">↗</span></button>
-          <a class="secondary-action" href="/guide.html">Открыть карту обучения</a>
-        </div>
-        <div class="hero-trust" aria-label="Особенности тренажёра">
-          <span><b aria-hidden="true">✓</b> Без установки</span>
-          <span><b aria-hidden="true">✓</b> Только вымышленные данные</span>
-          <span><b aria-hidden="true">✓</b> Java 21 · Spring Boot</span>
-        </div>
-      </div>
-
-      <div class="hero-side" aria-label="Как устроена практика">
-        <div class="story-card">
-          <div class="story-card-head"><span>Сценарий практики</span><strong>01 — 17</strong></div>
-          <h2>Один запрос.<br>Одно понятное открытие.</h2>
-          <div class="story-flow">
-            <div class="flow-node"><span class="flow-icon" aria-hidden="true">you</span><span>ты</span></div>
-            <span class="flow-arrow" aria-hidden="true">→</span>
-            <div class="flow-node"><span class="flow-icon server" aria-hidden="true">API</span><span>сервер</span></div>
-            <span class="flow-arrow" aria-hidden="true">→</span>
-            <div class="flow-node"><span class="flow-icon result" aria-hidden="true">200</span><span>ответ</span></div>
-          </div>
-          <p>Выбираешь шаг, отправляешь запрос, читаешь статус и JSON. Ошибка здесь — не провал, а подсказка.</p>
-        </div>
-        <div class="hero-side-note"><span class="note-line" aria-hidden="true"></span><span>Сложное внутри — простое снаружи.</span></div>
-      </div>
-    </section>
-
-    <section class="notice" role="note">
-      <span class="notice-icon" aria-hidden="true">i</span>
-      <div><strong>Безопасная учебная песочница.</strong> Только вымышленные данные, отдельный учебный аккаунт и никакой реальной оплаты.</div>
-      <span class="notice-detail">Данные временные · бесплатный сервер может просыпаться до минуты</span>
-    </section>
 
     <section class="lab" id="lab" aria-label="Лаборатория HTTP">
       <aside class="mission-sidebar">
         <div class="sidebar-head">
-          <div><span class="overline">МАРШРУТ</span><h2>Практика</h2></div>
-          <span id="progress" class="progress-count">0 / 17</span>
+          <div><span class="overline"></span><h2>Практика</h2></div>
         </div>
         <div class="progress-track" aria-hidden="true"><span id="progress-fill"></span></div>
         <div id="missions" class="mission-list"></div>
@@ -89,7 +49,7 @@
 
       <div class="workspace">
         <header class="lesson-header">
-          <div class="lesson-topline"><span id="lesson-label" class="lesson-label"></span><span class="practice-mode"><span aria-hidden="true"></span> Учебный режим</span></div>
+          <div class="lesson-topline"><span id="lesson-label" class="lesson-label"></span><span class="practice-mode"><span aria-hidden="true"></span></span></div>
           <h2 id="lesson-title"></h2>
           <p id="lesson-description"></p>
           <div class="expected">
@@ -147,13 +107,6 @@
         <div class="workspace-footer"><span>Меняй данные намеренно: хороший тест проверяет и успех, и отказ.</span><button id="reset" type="button" class="reset-button">Сбросить мою песочницу <span aria-hidden="true">↺</span></button></div>
       </div>
     </section>
-
-    <section class="next-section">
-      <div><span class="overline">СЛЕДУЮЩИЙ УРОВЕНЬ</span><h2>Запрос → тест → коммит → деплой.</h2><p>Когда HTTP станет привычным, запускай тот же сервис в Docker и смотри, как GitHub Actions проверяет изменения.</p></div>
-      <a href="/guide.html" class="outline-action">Открыть практикум <span aria-hidden="true">↗</span></a>
-    </section>
   </main>
-
-  <footer class="site-footer"><span>QA LAB <i aria-hidden="true">/</i> учебный проект</span><span>Цены в сомах · реальных клиентов и платежей нет</span></footer>
 </body>
 </html>
