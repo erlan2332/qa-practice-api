@@ -23,7 +23,8 @@
       </a>
       <nav class="top-nav" aria-label="Основная навигация">
         <a href="/guide.html">Карта обучения</a>
-        <a href="/openapi.yaml">API-контракт <span aria-hidden="true">↗</span></a>
+        <a class="swagger-nav" href="/swagger-ui.html">Swagger UI <span aria-hidden="true">↗</span></a>
+        <a href="/openapi.yaml">OpenAPI YAML <span aria-hidden="true">↗</span></a>
       </nav>
       <div class="header-actions">
         <span id="health" class="health-pill"><span class="health-dot" aria-hidden="true"></span>Проверяем API…</span>
@@ -78,9 +79,9 @@
           <span id="progress" class="progress-count">0 / 17</span>
         </div>
         <div class="progress-track" aria-hidden="true"><span id="progress-fill"></span></div>
-        <p class="sidebar-hint">Иди по шагам или выбирай любой сценарий. Пройденное сохранится до обновления страницы.</p>
         <div id="missions" class="mission-list"></div>
         <div class="resource-list">
+          <a href="/swagger-ui.html"><span aria-hidden="true">↗</span> Открыть Swagger UI</a>
           <a href="/postman/qa-lab.postman_collection.json" download><span aria-hidden="true">↓</span> Коллекция Postman</a>
           <a href="/postman/local.postman_environment.json" download><span aria-hidden="true">↓</span> Окружение localhost</a>
         </div>

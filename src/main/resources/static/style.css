@@ -200,6 +200,13 @@ pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2; }
 .site-footer { display: flex; justify-content: space-between; gap: 20px; padding: 22px max(48px, calc((100vw - 1344px) / 2)); border-top: 1px solid var(--line); color: var(--quiet); font: 10px var(--mono); }
 .site-footer i { padding: 0 7px; color: var(--line-strong); font-style: normal; }
 
+/* Focus mode: once the learner reaches the lab, the console gets the attention. */
+.lesson-header > p, .expected, .field-hint, .feedback, .response-details, .response-tip, .workspace-footer, .resource-list { display: none; }
+.lesson-header { margin-bottom: 20px; }
+.lesson-header h2 { margin-top: 7px; font-size: clamp(26px, 2.5vw, 34px); }
+.panel-heading .panel-title-group > div > span, .panel-state, .keyboard-hint { display: none; }
+.panel-heading { margin-bottom: 18px; padding-bottom: 12px; }
+
 /* The guide shares the same calmer design tokens, while keeping its document structure. */
 .guide { max-width: 900px; padding: 57px 0 90px; }
 .guide h1 { margin: 0 0 20px; font-size: clamp(36px, 5vw, 60px); font-weight: 600; letter-spacing: -.065em; line-height: 1.05; }

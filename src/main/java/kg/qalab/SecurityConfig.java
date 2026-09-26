@@ -33,7 +33,7 @@ public class SecurityConfig {
             .httpBasic(c -> c.disable()).formLogin(c -> c.disable()).logout(c -> c.disable())
             .headers(h -> h.contentSecurityPolicy(c -> c.policyDirectives("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'")))
             .authorizeHttpRequests(a -> a
-                .requestMatchers("/","/index.html","/app.js","/style.css","/favicon.svg","/openapi.yaml","/postman/**","/guide.html","/error").permitAll()
+                .requestMatchers("/","/index.html","/app.js","/style.css","/favicon.svg","/openapi.yaml","/postman/**","/guide.html","/swagger-ui.html","/swagger-ui/**","/v3/api-docs","/v3/api-docs.yaml","/v3/api-docs/**","/webjars/**","/error").permitAll()
                 .requestMatchers("/api/health","/api/catalog","/api/auth/register","/api/auth/login").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated())

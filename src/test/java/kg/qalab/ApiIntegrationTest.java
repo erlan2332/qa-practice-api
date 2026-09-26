@@ -179,6 +179,9 @@ class ApiIntegrationTest {
     }
     @Test void staticAssetsPublicAndHeadWorks() throws Exception {
         mvc.perform(get("/")).andExpect(status().isOk());
+        mvc.perform(get("/swagger-ui.html")).andExpect(status().isFound());
+        mvc.perform(get("/v3/api-docs")).andExpect(status().isOk()).andExpect(jsonPath("$.info.title").value("QA Lab API"));
+        mvc.perform(get("/v3/api-docs.yaml")).andExpect(status().isOk());
         // MockMvc is not a servlet container; wire-level HEAD is covered by smoke.py.
         mvc.perform(head("/api/catalog")).andExpect(status().isOk());
     }
