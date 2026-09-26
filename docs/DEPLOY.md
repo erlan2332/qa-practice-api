@@ -1,5 +1,7 @@
 # Бесплатный Render: пошагово
 
+Рабочее учебное демо: **https://qa-practice-api-vjlq.onrender.com/**
+
 1. Открой Render: **New → Web Service → GitHub** и выбери `erlan2332/qa-practice-api`.
 2. Проверь Docker runtime, регион `Frankfurt`, plan `Free` и health path `/api/health`.
 3. Auto-Deploy: **After CI Checks Pass**.
