@@ -69,12 +69,12 @@ Smoke-тест создаёт уникального учебного польз
 ```text
 ветка → Pull Request → Java tests → Docker build → HTTP smoke
                                                   ↓
-                               merge в main → все CI checks зелёные
+                         merge в dev-prod-1 → все CI checks зелёные
                                                   ↓
                          Render: After CI Checks Pass → Docker → HTTPS
 ```
 
-Workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml). Он запускается для PR в main и push в main. Render должен быть подключён к GitHub и настроен на **After CI Checks Pass**: YAML сам по себе не подключает аккаунты. Деплой ключа/пароля в репозитории нет. CI проверяет контейнер с ограничением 512 MB; финальный контейнер работает не от root. Для PR не создаются платные preview-сервисы.
+Workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml). Он запускается для PR в `dev-prod-1` и push в `dev-prod-1`. Render должен быть подключён к GitHub и настроен на **After CI Checks Pass**: YAML сам по себе не подключает аккаунты. Деплой ключа/пароля в репозитории нет. CI проверяет контейнер с ограничением 512 MB; финальный контейнер работает не от root. Для PR не создаются платные preview-сервисы.
 
 ## Как устроен код
 

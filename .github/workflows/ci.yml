@@ -1,9 +1,9 @@
 name: CI
 on:
   push:
-    branches: [main]
+    branches: [dev-prod-1]
   pull_request:
-    branches: [main]
+    branches: [dev-prod-1]
   workflow_dispatch:
 
 permissions:
@@ -58,5 +58,5 @@ jobs:
       - name: Remove this job's disposable container
         if: always()
         run: docker rm -f qa-lab-ci || true
-# CD is performed by Render only after ALL checks above pass on main.
+# CD is performed by Render only after ALL checks above pass on dev-prod-1.
 # render.yaml: autoDeployTrigger: checksPass. No deploy token is needed.
