@@ -22,14 +22,16 @@ const lessons = [
 ];
 const expand = value => value.replace(/\{\{(email|productId|orderId)\}\}/g,(_,key)=>state[key]||`{{${key}}}`);
 function renderMissions(){
- $('missions').replaceChildren();
+ const missions=$('missions');
+ missions.replaceChildren();
  lessons.forEach((lesson,index)=>{
   const button=document.createElement('button');button.type='button';button.className=`mission ${index===state.lesson?'active':''} ${state.completed.has(index)?'done':''}`;
   button.setAttribute('aria-current',index===state.lesson?'step':'false');
   const number=document.createElement('span');number.className='index';number.textContent=state.completed.has(index)?'✓':String(index+1).padStart(2,'0');
-  const title=document.createElement('span');title.textContent=lesson.title;button.append(number,title);button.addEventListener('click',()=>choose(index));$('missions').append(button);
+  const title=document.createElement('span');title.textContent=lesson.title;button.append(number,title);button.addEventListener('click',()=>choose(index));missions.append(button);
  });
- $('progress').textContent=`${state.completed.size} / ${lessons.length}`;
+ const progress=document.getElementById('progress');
+ if(progress)progress.textContent=`${state.completed.size} / ${lessons.length}`;
  $('progress-fill').style.width=`${Math.round((state.completed.size/lessons.length)*100)}%`;
 }
 function choose(index){
@@ -53,9 +55,16 @@ async function send(){
  $('raw-request').textContent=`${method} ${path}\n${Object.entries(safeHeaders).map(([k,v])=>`${k}: ${v}`).join('\n')}${hasBody?'\n\n'+safeBody:''}`;
  $('send').disabled=true;$('send').setAttribute('aria-busy','true');$('status').textContent='Отправляем…';$('status').className='status';$('feedback').textContent='Ожидаем ответ. После сна бесплатный сервер запускается заново.';
  const started=performance.now();const abort=new AbortController();const timeout=setTimeout(()=>abort.abort(),90000);
+ let response,raw;
  try{
-  const response=await fetch(path,{method,headers,body:hasBody?body:undefined,signal:abort.signal,credentials:'omit',redirect:'error'});
-  const raw=await response.text();let data;try{data=JSON.parse(raw);}catch{}
+  response=await fetch(path,{method,headers,body:hasBody?body:undefined,signal:abort.signal,credentials:'omit',redirect:'error'});
+  raw=await response.text();
+ }catch(error){
+  $('status').textContent='Нет ответа';$('status').className='status bad';$('feedback').textContent=error.name==='AbortError'?'Сервер не ответил за 90 секунд. Возможно, он ещё запускается. Попробуй снова.':'Не удалось получить ответ. Проверь сеть и доступность сервера.';$('response').textContent='HTTP-статус не получен. Это не то же самое, что ответ 500.';
+  return;
+ }finally{clearTimeout(timeout);$('send').disabled=false;$('send').removeAttribute('aria-busy');}
+ try{
+  let data;try{data=JSON.parse(raw);}catch{}
   $('status').textContent=`${response.status} ${response.statusText}`;$('status').className=`status ${response.ok?'good':'bad'}`;$('timing').textContent=`${Math.round(performance.now()-started)} мс`;
   let display=data;if(data?.token){syncToken(data.token);display={...data,token:'<сохранён в поле токена; скрыт в ответе>'};if(data.user?.email)state.email=data.user.email;}
   $('response').textContent=display?JSON.stringify(display,null,2):(raw||'∅ Пустое тело ответа. Для 204 это правильно.');
@@ -67,8 +76,7 @@ async function send(){
   const expected=lesson.status.includes(response.status)&&method===lesson.method&&path.split('?')[0]===expand(lesson.path).split('?')[0];
   if(expected){state.completed.add(lessonIndex);renderMissions();$('feedback').textContent='Нужный статус получен ✓ Теперь проверь содержимое по подсказке выше: один код ещё не доказывает, что всё правильно.';}
   else $('feedback').textContent=response.ok?'Запрос выполнен. Сравни результат с ожиданием.':`${data?.message||'Сервер вернул ошибку'}. Смотри code и fields ниже.`;
- }catch(error){$('status').textContent='Нет ответа';$('status').className='status bad';$('feedback').textContent=error.name==='AbortError'?'Сервер не ответил за 90 секунд. Возможно, он ещё запускается. Попробуй снова.':'Не удалось получить ответ. Проверь сеть и доступность сервера.';$('response').textContent='HTTP-статус не получен. Это не то же самое, что ответ 500.';}
- finally{clearTimeout(timeout);$('send').disabled=false;$('send').removeAttribute('aria-busy');}
+ }catch(error){console.error('Не удалось полностью отобразить HTTP-ответ',error);$('feedback').textContent='HTTP-ответ получен, но интерфейс не смог отобразить часть результата.';}
 }
 $('send').addEventListener('click',send);$('method').addEventListener('change',bodyMode);$('token').addEventListener('input',e=>syncToken(e.target.value.trim()));$('show-token').addEventListener('click',()=>{$('token').type=$('token').type==='password'?'text':'password';});
 document.querySelectorAll('[data-scroll-to]').forEach(button=>button.addEventListener('click',()=>document.querySelector(button.dataset.scrollTo)?.scrollIntoView({behavior:'smooth',block:'start'})));
