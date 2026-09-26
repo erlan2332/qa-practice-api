@@ -1,0 +1,18 @@
+services:
+  qa-lab:
+    build: .
+    image: qa-practice-api:local
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      PORT: "8080"
+    mem_limit: 512m
+    cpus: 1
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+# No volume on purpose: this is a disposable in-memory training app.

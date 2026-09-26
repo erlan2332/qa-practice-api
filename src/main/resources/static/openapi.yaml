@@ -1,0 +1,57 @@
+openapi: 3.1.0
+info:
+  title: QA Lab API
+  version: 1.0.0
+  description: Disposable API playground. Prices are whole KGS.
+servers:
+  - url: /
+paths:
+  /api/health:
+    get:
+      responses: {'200': {description: API ready}}
+  /api/catalog:
+    get:
+      responses: {'200': {description: Public demo catalog}}
+  /api/auth/register:
+    post:
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/Register'}}}}
+      responses: {'201': {description: Session}, '400': {description: Validation error}, '409': {description: Duplicate email}}
+  /api/auth/login:
+    post:
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/Login'}}}}
+      responses: {'200': {description: Session}, '401': {description: Invalid credentials}}
+  /api/me:
+    get: {security: [{bearerAuth: []}], responses: {'200': {description: Current user}, '401': {description: Missing token}}}
+    delete: {security: [{bearerAuth: []}], responses: {'204': {description: Account deleted}}}
+  /api/products:
+    get: {security: [{bearerAuth: []}], responses: {'200': {description: Personal page}}}
+    post:
+      security: [{bearerAuth: []}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/ProductInput'}}}}
+      responses: {'201': {description: Created}, '400': {description: Validation error}}
+  /api/products/{id}:
+    parameters: [{in: path, name: id, required: true, schema: {type: string}}]
+    get: {security: [{bearerAuth: []}], responses: {'200': {description: Product}, '404': {description: Not found}}}
+    put: {security: [{bearerAuth: []}], responses: {'200': {description: Replaced}}}
+    patch: {security: [{bearerAuth: []}], responses: {'200': {description: Stock changed}}}
+    delete: {security: [{bearerAuth: []}], responses: {'204': {description: Deleted}}}
+  /api/orders:
+    get: {security: [{bearerAuth: []}], responses: {'200': {description: Orders}}}
+    post:
+      security: [{bearerAuth: []}]
+      parameters: [{in: header, name: Idempotency-Key, schema: {type: string, maxLength: 64}}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/OrderInput'}}}}
+      responses: {'201': {description: Created}, '200': {description: Replay}, '409': {description: Conflict}}
+  /api/orders/{id}/pay:
+    post: {security: [{bearerAuth: []}], responses: {'200': {description: Paid}, '402': {description: Declined}}}
+  /api/orders/{id}/cancel:
+    post: {security: [{bearerAuth: []}], responses: {'200': {description: Cancelled}}}
+  /api/sandbox/reset:
+    post: {security: [{bearerAuth: []}], responses: {'200': {description: Reset current learner}}
+components:
+  securitySchemes: {bearerAuth: {type: http, scheme: bearer}}
+  schemas:
+    Register: {type: object, required: [email, password, name], properties: {email: {type: string, format: email}, password: {type: string, minLength: 8}, name: {type: string, minLength: 2}}
+    Login: {type: object, required: [email, password], properties: {email: {type: string, format: email}, password: {type: string}}
+    ProductInput: {type: object, required: [name, price, stock], properties: {name: {type: string}, price: {type: integer, minimum: 1}, stock: {type: integer, minimum: 0}}
+    OrderInput: {type: object, required: [productId, quantity], properties: {productId: {type: string}, quantity: {type: integer, minimum: 1, maximum: 20}}

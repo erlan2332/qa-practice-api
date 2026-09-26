@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: qa-practice-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: PORT
+        value: "10000"
+# No database, paid disk, cron, preview environment, or paid instance.

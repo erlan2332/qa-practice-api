@@ -1,0 +1,62 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Java tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Run unit and API integration tests
+        run: ./mvnw -B -ntp verify
+      - name: Save test reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: java-test-reports
+          path: target/surefire-reports/
+          retention-days: 7
+
+  container:
+    name: Docker and HTTP smoke
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Build the same Dockerfile as Render
+        run: docker build -t qa-lab:ci .
+      - name: Start with Free-tier memory limit and non-root user
+        run: >-
+          docker run -d --name qa-lab-ci --memory=512m --cpus=1
+          --read-only --tmpfs /tmp:size=32m,mode=1777
+          --cap-drop ALL --security-opt no-new-privileges:true
+          -p 127.0.0.1:8080:8080 qa-lab:ci
+      - name: Verify real HTTP behavior
+        run: python3 scripts/smoke.py http://127.0.0.1:8080
+      - name: Print application logs if a check fails
+        if: failure()
+        run: docker logs qa-lab-ci
+      - name: Remove this job's disposable container
+        if: always()
+        run: docker rm -f qa-lab-ci || true
+# CD is performed by Render only after ALL checks above pass on main.
+# render.yaml: autoDeployTrigger: checksPass. No deploy token is needed.

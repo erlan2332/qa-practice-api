@@ -1,0 +1,14 @@
+.git
+.github
+target
+.idea
+.vscode
+.DS_Store
+.env*
+*.log
+docs
+scripts
+README.md
+HELP.md
+compose.yaml
+render.yaml
